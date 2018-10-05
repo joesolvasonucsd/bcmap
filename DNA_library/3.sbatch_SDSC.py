@@ -40,4 +40,3 @@ for fn in fns:
 	open("seq2dict.sh","w").write(line_out)
 
 	os.system("sbatch seq2dict.sh")
-

@@ -1,10 +1,12 @@
 #!/bin/bash
 
-####################
-# Script Info
-####################
-
 # Purpose: Produce a tab-separated-values file with column 1 = Read and column 2 = Read Counts. All reads in this file are unique. 
+
+# Usage: 
+#	bash 1.reads2Txt.sh <data directory> <basename>
+
+
+
 
 # Input: One or more .fastq files with a common basename. If only one file, basename can be the name except the .fastq suffix (for example: sample1.fastq basename would be sample1)
 # Outputs: 
