@@ -1,8 +1,12 @@
 # Purpose: Produce a tab-separated-values file with column 1 = Read and column 2 = Read Counts. All reads in this file are unique. 
 
 # Usage: 
-#       bash 1.reads2Txt.sh <data directory*> <basename>
-# 	* NOTE ensure <data directory> ends with '/'
+#       bash reads2BcDict.sh <data directory*> <basename> <email>
+
+# Notes:
+#       * NOTE ensure <data directory> ends with '/'
+
+# Log (<basename>.log) file of analysis printed to same directory as data
 
 # Tested 181003
 
@@ -23,8 +27,11 @@
 # Script 
 ####################
 
+# email 
+EMAIL=$3
+
 # Where python scripts are located
-SCRIPTSDIR="./DNA_library/"
+SCRIPTSDIR="/oasis/projects/nsf/csd579/solvason/scripts/bcmap/DNA_library/"
 
 # Where can your data be found
 DATADIR=$1
@@ -35,18 +42,37 @@ CONCATENATED_BASENAME=${BASENAME}_collapsed
 QFILTERED_BASENAME=${CONCATENATED_BASENAME}_filtered
 COLLAPSED_BASENAME=${QFILTERED_BASENAME}_collapsed.txt
 
-#How to process the DNA dictionary data:
+# log files
+LOG=${BASENAME}.txt
+READCOUNTS=${BASENAME}_counts.tsv
+
+touch $LOG $READCOUNTS
+
+
+# Process the DNA dictionary data:
+echo "Unizpping gz files..."
 zcat ${BASENAME}*.gz > ${CONCATENATED_BASENAME}.fastq # unzipping the files and concatenate to single .fastq
 
+echo "Quality filtering..."
 cat ${CONCATENATED_BASENAME}.fastq |  grep -A 3 '^@.* [^:]*:N:[^:]*:' | grep -v "^--$" > ${QFILTERED_BASENAME}.fastq # Filter on quality score to remove low quality reads
 
+echo "Deduping reads..."
 python ${SCRIPTSDIR}1.collapseSeq.py ${QFILTERED_BASENAME}.fastq # Script 1. Strips data down to the read and counts per read. This outputs collapsed.txt file
 
 # combine reads here if you need to, but another script is needed
 
-python 2.split4parallele.py ${COLLAPSED_BASENAME} # Script 2 splits the data into smaller files (10,000 reads per file)
+echo "Splitting for parallele..."
+python ${SCRIPTSDIR}2.split4parallele.py ${COLLAPSED_BASENAME} # Script 2 splits the data into smaller files (10,000 reads per file)
 
-#7.Python batch.py # has all the information to run the last part of the code seq2dict_v2.4
+# Count reads at various steps
+
+echo "Counting Reads..."
+echo -e "$(wc -l < ${CONCATENATED_BASENAME}.fastq)\t${CONCATENATED_BASENAME}.fastq" >> $READCOUNTS # reads analyzed
+echo -e "$(wc -l < ${QFILTERED_BASENAME}.fastq)\t${QFILTERED_BASENAME}.fastq" >> $READCOUNTS # reads not containing N
+echo -e "$(wc -l < ${COLLAPSED_BASENAME})\t${COLLAPSED_BASENAME}" >> $READCOUNTS # reads unique
+
+echo "Submitting for sbatch..."
+python ${SCRIPTSDIR}3.sbatch.py $DATADIR $BASENAME $EMAIL # has all the information to run the last part of the code seq2dict_v2.4
 
 #8.The script seq2.dict_v2.4.py is for the Fn library, seq2.dict_v2.4_inverse.py is for Fi libraries # This script makes the library of enhancer and bc into the dictionary 
 
