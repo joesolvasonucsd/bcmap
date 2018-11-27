@@ -1,3 +1,9 @@
+# Usage:
+#	python 1.collapseSeq.py <dir/to/data/input.fastq>
+
+# Note:
+#	File outputted to same directory as input. 
+#	File suffix = input_collapsed.txt
 
 import sys
 

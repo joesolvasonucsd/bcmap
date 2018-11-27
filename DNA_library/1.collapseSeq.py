@@ -1,3 +1,9 @@
+# Purpose: Count reads and remove duplicates of fastq file
+
+# Usage: python 1.collapseSeq.py <input_fastq>
+#
+# Where:
+#	<input_fastq> 	input fastq file
 
 import sys
 

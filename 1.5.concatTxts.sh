@@ -1,2 +1,0 @@
-# This is bad practice, but go into the 1.5 combine collapsed files to combine txt files as needed. You cannot specify what txt files to concat when calling the script.
-python 1.5.combineCollapsedFiles.py # Script 1.5.  Combines all the reads that are the same sequence. 

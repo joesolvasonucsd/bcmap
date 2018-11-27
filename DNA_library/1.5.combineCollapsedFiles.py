@@ -1,22 +1,28 @@
+# Usage: 
+#	python 1.5.combineCollapsedFiles.py <data_directory> <output_file_name> <input_file_1> <input_file_2> <input_file_n>
 
+# Where:
+#	<data_directory>			location of data
+#	<output_file_name>			output file name (no directory; eg <basename>_merged.txt)
+# 	<dir/to/data/input_file_n>		however many input files you wish to input
+
+import sys
+
+dataDir=sys.argv[1]
+outputFileName=sys.argv[2]
+inputFileNames=sys.argv[3:]
 seqs={}
 
-for line in open("/global/scratch/wzhang/20140424_Emma_Enhancer/Project_Levine/Sample_MLOTXAi12/MLOTXAi12_CTTGTA_L001_R1_filtered_collapsed.txt"):
-	a=line.rstrip().split("\t")
-	if a[0] in seqs:
-		seqs[a[0]]+=int(a[1])
-	else:
-		seqs[a[0]]=int(a[1])
-
-for line in open("/global/scratch/wzhang/20140424_Emma_Enhancer/Project_Levine/Sample_MLOTXAi6/MLOTXAi6_GCCAAT_L001_R1_filtered_collapsed.txt"):
-	a=line.rstrip().split("\t")
-	if a[0] in seqs:
-		seqs[a[0]]+=int(a[1])
-	else:
-		seqs[a[0]]=int(a[1])
+for fn in inputFileNames:
+	for line in open(fn):
+		a=line.rstrip().split("\t")
+		if a[0] in seqs:
+			seqs[a[0]]+=int(a[1])
+		else:
+			seqs[a[0]]=int(a[1])
 
 line_out=""
 for seq in seqs:
 	line_out+=seq+"\t"+str(seqs[seq])+"\n"
 
-open("MLOTXA_collapsed.txt","w").write(line_out)
+open(dataDir+outputFileName+"_merged.txt","w").write(line_out)

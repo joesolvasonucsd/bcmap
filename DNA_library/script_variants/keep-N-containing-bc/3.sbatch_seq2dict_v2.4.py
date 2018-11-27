@@ -46,7 +46,7 @@ for fn in fns:
         line_out+="module load python\n" # load package numpy
 	line_out+="module load scipy\n" # load package numpy
 	line_out+="module load biopython\n" # load package biopython
-	line_out+="python seq2dict_v3.0.py "+dataDir+" "+fn # change the name of script if necessary
+	line_out+="python seq2dict_v2.4.py "+dataDir+" "+fn # change the name of script if necessary
 	open("submit_seq2dict.sh","w").write(line_out)
 
 	os.system("sbatch submit_seq2dict.sh")

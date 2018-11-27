@@ -1,9 +1,10 @@
 # Usage: 
-#	python 2.barcode2enhancer_v3.py <dir/to/data/> </dir/to/dict/>
+#	python 2.barcode2enhancer_v3.py <dir/to/data/> </dir/to/dict/> <number_inputs_x2.collapsed2counts.py> <min_enhancer_activation> <sample_name>
 
 # Note:
 #	No input file names needed as these file names do not change from sample to sample. 
-
+#	<number_inputs_x2.collapsed2counts.py> refers to the number of files inputted to x2.collapsed2counts. this is important because this will determine the number of colums in the barcode2reads.txt & barcode2reads_unique4all files
+#	<min_enhancer_activation> activation threshold requirement for enhancer. typically set for WT enhancer.
 
 
 
@@ -14,15 +15,18 @@ import sys
 try:
 	dataDir=sys.argv[1]+'/'
 	dictDir=sys.argv[2]+'/'
+	numFiles=int(sys.argv[3])
+	minActive=float(sys.argv[4])
+	jobName=sys.argv[5]
 except IndexError:
         print("Error: You did not specify all required arguments. View the head (use the head command) to view all necessary arguments and their order")
 
 
 fns=glob.glob(dictDir+"/*") #Directory of DNA dictionary
-Dict={} # eg Dict = 	{ "AAA" : 
-#				{ "<barcode>" : [ <barcode_type> , { <enhancer> : <count> , ... } , <barcode_count_all> ]
-#					} 
-#			}
+Dict={} 
+# eg 
+# Dict = { "Bin" : 
+#		{ "bc" : [ "bc_type" , { "enhancer" : count , ... } , bc_count_global ] } }
 
 for fn in fns:
 	print "Reading "+fn.split("/")[-1] # AAA.txt
@@ -148,27 +152,40 @@ print ID
 
 # columns of barcode2enhancer2reads_uniqueAll4.txt
 #       a[0] = bc
-#       a[1] = bc count normalized w/in file (bc read count in file * 1e6 / total reads in file)
-#       a[2] = bc type
-#       a[3] = bc count global (regardless of what enhancer it maps to)
-#       a[4] = dominant enhancer mapped to bc
-#	a[5] = dominant enhancer count
+#       a[1:k+1] = bc count normalized w/in file (bc read count in file * 1e6 / total reads in file)
+#		where k = number of additional files inputted into the pipeline (eg if 2 files inputted, k=1; 3 files inputted, k=2; etc)
+#       a[k+2] = bc type
+#       a[k+3] = bc count global (regardless of what enhancer it maps to)
+#       a[k+4] = dominant enhancer mapped to bc
+#	a[k+5] = dominant enhancer count
 
 import numpy as np
 
 enhancers={}
-# eg enhancers = { "dominant_enhancer" : [ "barcode" , [ 
+# eg
+# enhancers = { "enhancer" : [ "bc1,...,bcn" , [ [ bc1_count_norm_1 , ... , bc1_count_norm_n ] , ... , [ bc2_count_norm_1 , ... , bc2_count_norm_n ] ] , [ bc1_count , ... , bc2_count , dom_enh_count ] }
 
+# label indices for clarity
+bc           =0
+bc_count_norm=[index+1 for index in list(range(numFiles))] # if multiple counts, you can turn this into a list
+bc_type      =numFiles+1
+bc_count     =numFiles+2
+dom_enh      =numFiles+3
+dom_enh_count=numFiles+4
+
+max_col=max(bc_count_norm)
+min_col=min(bc_count_norm)
+ 
 for line in open(dataDir+"barcode2enhancer2reads_uniqueAll4.txt").read().rstrip().split("\n"):
 	a=line.split("\t")
-	if a[7]:
-		if not a[7] in enhancers:
-			enhancers[a[7]]=[a[0],[[float(i) for i in a[1:5]]],[a[6]],[a[8]]]
+	if a[dom_enh]:
+		if not a[dom_enh] in enhancers:
+			enhancers[a[dom_enh]]=[a[bc],[[float(i) for i in a[min_col:max_col+1]]],[a[bc_count]],[a[dom_enh_count]]]
 		else:
-			enhancers[a[7]][0]+=","+a[0]
-			enhancers[a[7]][1].append([float(i) for i in a[1:5]])
-			enhancers[a[7]][2].append(a[6])
-			enhancers[a[7]][3].append(a[8])
+			enhancers[a[dom_enh]][0]+=","+a[0]
+			enhancers[a[dom_enh]][1].append([float(i) for i in a[min_col:max_col+1]])
+			enhancers[a[dom_enh]][2].append(a[bc_count])
+			enhancers[a[dom_enh]][3].append(a[dom_enh_count])
 
 line_out=""
 for enhancer in enhancers:
@@ -189,11 +206,11 @@ line_out=""
 ID=0
 for line in open(dataDir+"barcode2enhancer2reads_uniqueAll4_collapsed.txt").read().rstrip().split("\n"):
 	a=line.split("\t")
-	if float(a[1])>=4 or float(a[2])>=4: # get Fn2 or Fn3 >= 4
+	if float(a[1])>=minActive:
 		ID+=1
 		line_out+=">"+str(ID)+" "+" ".join(a[1:5])+"\n"+a[-2]+"\n"
 
-open(dataDir+"enhancers_cut4anyFn23_20150110.fa","w").write(line_out)
+open(dataDir+jobName+"_enhancers_greater_"+str(minActive)+".fa","w").write(line_out)
 
 
 

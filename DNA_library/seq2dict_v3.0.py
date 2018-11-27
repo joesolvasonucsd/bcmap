@@ -1,3 +1,10 @@
+# Usage: seq2dict.py <data_directory> </dir/to/data/file_name>
+
+# New in v3.0:
+#	- Barcodes containing N are not considered
+#	- Some changes to how files are inputted, but no changes to underlying algorithm
+
+# Info on what to expect from sequencing data:
 #@HS3:446:H7M2YADXX:1:1101:1109:2046 1:N:0:CTTGTA
 #GNCTCGGTCCGATCGGAATTCTTGGTTTGTTTATACACTAGAAGAGGAGAATGGTTTGCCTATATCGCTGATAGTGTACGGTTTCCAGGGCAGTCAATTCCGACTACGATACCAGCAGATGATCCAGTGTGCTGGTTTCTCCTCGTCTGA
 #+
@@ -13,7 +20,7 @@
 #              barcode               |                     |                               enhancer                              |                     
 
 
-
+import os
 import sys
 from Bio import pairwise2
 import time
@@ -71,7 +78,7 @@ def checkSeqExist_2mis(seq,loc,minLoc,maxLoc,template):
 		else:
 			return False
 
-
+# Set up dictionaries 
 bin2barcode2enhancer={}
 noBarcodeOrLinker=0
 type2barcode={}
@@ -80,12 +87,20 @@ type2barcode["e"]={}
 type2barcode["u_e"]={}
 type2barcode["m"]={}
 
+# Count number of reads processed
 cline=0
 
-fn=sys.argv[1]
+# Parse arguments
+dataDir=sys.argv[1]
+if dataDir[-1]!='/':
+	dataDir+='/'
+
+fn=sys.argv[2]
+
+# Make directory where dictionaries will be written
+os.system("mkdir "+dataDir+"dict 2>/dev/null")
 
 flag=True
-print "Reading "+fn
 t=time.clock()
 for line in open(fn):
 	if line[0]=="@":
@@ -112,61 +127,61 @@ for line in open(fn):
 		Bin=seq[:3]
 		barcode=seq.split(linker)[0]
 
+		if 'N' not in barcode:
+			if not Bin in bin2barcode2enhancer:
+				bin2barcode2enhancer[Bin]={}
+			if not barcode in bin2barcode2enhancer[Bin]:
+				bin2barcode2enhancer[Bin][barcode]={}
 
-		if not Bin in bin2barcode2enhancer:
-			bin2barcode2enhancer[Bin]={}
-		if not barcode in bin2barcode2enhancer[Bin]:
-			bin2barcode2enhancer[Bin][barcode]={}
+			adaptor=checkSeqExist_2mis(seq,128,len(seq)-len(seq.split(linker)[1]),143,"GTGCTGGTTTCTCCTCGTCTGA") # (sequence,location,start,end,adaptor sequence)
 
-		adaptor=checkSeqExist_2mis(seq,128,len(seq)-len(seq.split(linker)[1]),143,"GTGCTGGTTTCTCCTCGTCTGA") # (sequence,location,start,end,adaptor sequence)
+			if adaptor:
+				enhancer=seq.split(linker)[1].split(adaptor)[0]
+			else:
+				enhancer=seq.split(linker)[1]	
 
-		if adaptor:
-			enhancer=seq.split(linker)[1].split(adaptor)[0]
-		else:
-			enhancer=seq.split(linker)[1]
-
-		if not enhancer:
-			if not "" in bin2barcode2enhancer[Bin][barcode]:
-				bin2barcode2enhancer[Bin][barcode][""]=0
-			bin2barcode2enhancer[Bin][barcode][""]+=val
-			if barcode in type2barcode["u"]:
-				del type2barcode["u"][barcode]
-				type2barcode["u_e"][barcode]=1
-			elif (not barcode in type2barcode["u_e"]) and (not barcode in type2barcode["m"]):
-				type2barcode["e"][barcode]=1
-			continue
-
-
-		if (not barcode in type2barcode["m"]) and bin2barcode2enhancer[Bin][barcode]:
-			isSame=False
-			hasEnhancer=False
-			for i in bin2barcode2enhancer[Bin][barcode]:
-				if i=="":
-					if barcode in type2barcode["e"]:
-						del type2barcode["e"][barcode]
-						type2barcode["u_e"][barcode]=1
-				else:
-					hasEnhancer=True
-					if compareSeq(enhancer,i,2):
-						isSame=True
-						break
-					alignments=pairwise2.align.localms(enhancer, i,1,-1,-1,-1)
-					score=alignments[0][2]
-					if score>=min(len(i),len(enhancer))-4:
-						isSame=True
-						break
-			if hasEnhancer and (not isSame):
-				type2barcode["m"][barcode]=1
+			if not enhancer:
+				if not "" in bin2barcode2enhancer[Bin][barcode]:
+					bin2barcode2enhancer[Bin][barcode][""]=0
+				bin2barcode2enhancer[Bin][barcode][""]+=val
 				if barcode in type2barcode["u"]:
 					del type2barcode["u"][barcode]
-				if barcode in type2barcode["u_e"]:
-					del type2barcode["u_e"][barcode]
+					type2barcode["u_e"][barcode]=1
+				elif (not barcode in type2barcode["u_e"]) and (not barcode in type2barcode["m"]):
+					type2barcode["e"][barcode]=1
+				continue
 
-		if not enhancer in bin2barcode2enhancer[Bin][barcode]:
-			bin2barcode2enhancer[Bin][barcode][enhancer]=0
-		bin2barcode2enhancer[Bin][barcode][enhancer]+=val
-		if (not barcode in type2barcode["e"]) and (not barcode in type2barcode["u_e"]) and (not barcode in type2barcode["m"]):
-			type2barcode["u"][barcode]=1
+
+			if (not barcode in type2barcode["m"]) and bin2barcode2enhancer[Bin][barcode]:
+				isSame=False
+				hasEnhancer=False
+				for i in bin2barcode2enhancer[Bin][barcode]:
+					if i=="":
+						if barcode in type2barcode["e"]:
+							del type2barcode["e"][barcode]
+							type2barcode["u_e"][barcode]=1
+					else:
+						hasEnhancer=True
+						if compareSeq(enhancer,i,2):
+							isSame=True
+							break
+						alignments=pairwise2.align.localms(enhancer, i,1,-1,-1,-1)
+						score=alignments[0][2]
+						if score>=min(len(i),len(enhancer))-4:
+							isSame=True
+							break
+				if hasEnhancer and (not isSame):
+					type2barcode["m"][barcode]=1
+					if barcode in type2barcode["u"]:
+						del type2barcode["u"][barcode]
+					if barcode in type2barcode["u_e"]:
+						del type2barcode["u_e"][barcode]
+
+			if not enhancer in bin2barcode2enhancer[Bin][barcode]:
+				bin2barcode2enhancer[Bin][barcode][enhancer]=0
+			bin2barcode2enhancer[Bin][barcode][enhancer]+=val
+			if (not barcode in type2barcode["e"]) and (not barcode in type2barcode["u_e"]) and (not barcode in type2barcode["m"]):
+				type2barcode["u"][barcode]=1
 
 print str(cline)+"\t"+str(time.clock()-t)+"\t"+str(len(type2barcode["u"]))+"\t"+str(len(type2barcode["e"]))+"\t"+str(len(type2barcode["u_e"]))+"\t"+str(len(type2barcode["m"]))
 
@@ -191,7 +206,7 @@ for Bin in bin2barcode2enhancer:
 		if barcode in type2barcode["m"]:
 			for enhancer in bin2barcode2enhancer[Bin][barcode]:
 				line_multi+=barcode+"\tm\t"+enhancer+"\t"+str(int(np.sum(bin2barcode2enhancer[Bin][barcode].values())))+"\t"+str(bin2barcode2enhancer[Bin][barcode][enhancer])+"\n"
-	open("dict/"+Bin+".txt","w").write(line_out+line_unique_or_empty+line_empty+line_multi)
+	open(dataDir+"dict/"+Bin+".txt","w").write(line_out+line_unique_or_empty+line_empty+line_multi)
 
 
 
