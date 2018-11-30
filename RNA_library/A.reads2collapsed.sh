@@ -1,6 +1,6 @@
 # Purpose: Collapse to unique reads and record read counts.
 
-# Usage: bash reads2counts.sh <dir/to/data/> <basename_gz>
+# Usage: bash A.reads2collapsed.sh <dir/to/input/data/> </dir/to/output> <basename_gz>
 
 # Where:
 #       <data_directory>        directory where input gzipped read files are located
@@ -13,18 +13,15 @@
 
 # Arguments
 DATADIR=$1
-BASENAME=${DATADIR}/$2
+OUTPUTDIR=$2
+BASENAME_INPUT=${DATADIR}/$3
+BASENAME_OUTPUT=${OUTPUTDIR}/$3
 
-# Useful Vars
-CONCATENATED_BASENAME=${BASENAME}_collapsed
-QFILTERED_BASENAME=${BASENAME}_collapsed_filtered
-COLLAPSED_BASENAME=${BASENAME}_collapsed_filtered_collapsed
+# File Names
+QFILTERED_BASENAME=${BASENAME_OUTPUT}_collapsed_filtered
 
-# Unzip all fastq files to single file
-zcat  ${BASENAME}*.fastq.gz > ${CONCATENATED_BASENAME}.fastq
-
-# Quality filter
-cat ${CONCATENATED_BASENAME}.fastq |  grep -A 3 '^@.* [^:]*:N:[^:]*:' | grep -v "^--$" > ${QFILTERED_BASENAME}.fastq
+# Unzip all gz files with same basename | QC filter | save filtered.fastq
+zcat  ${BASENAME_INPUT}*.fastq.gz |  grep -A 3 '^@.* [^:]*:N:[^:]*:' | grep -v "^--$" > ${QFILTERED_BASENAME}.fastq
 
 # Count & Deduplicate reads
-python 1.collapseSeq.py ${QFILTERED_BASENAME}.fastq
+python 0.collapseSeq.py ${QFILTERED_BASENAME}.fastq

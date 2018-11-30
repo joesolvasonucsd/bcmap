@@ -1,5 +1,11 @@
 # Usage
-#	python 1.RNAseq2reads.py <output/dir> <dir/to/data/input_collapsed_1.txt> <dir/to/data/input_collapsed_2.txt> ...
+#	python2 1.RNAseq2reads.py </dir/to/output/> <dir/to/input_collapsed_1.txt> <dir/to/input_collapsed_2.txt> ...
+
+# Notes
+#	<output_filename> should be something like <sample>_rnaseq2barcodes.txt
+
+
+
 
 
 
@@ -10,6 +16,17 @@
 import sys
 from Bio import pairwise2
 import time
+
+
+# Parse Args
+try:
+	outputDir = sys.argv[1] + '/'
+	fns=sys.argv[2:]
+except IndexError:
+	print('ERROR: Not all required args provided. type head 1.RNAseq2reads.py to list all required args')
+
+
+
 
 def compareSeq(candidate,template,nMis):
 	if candidate==template:
@@ -65,7 +82,6 @@ def checkSeqExist_2mis(seq,loc,minLoc,maxLoc,template):
 
 
 barcode2reads={}
-fns=sys.argv[2:]
 totalReads={}
 fnID=0
 
@@ -112,13 +128,14 @@ for fn in fns:
 	print "No adaptor (n="+str(noAdaptor)+")"
 
 
-print "Outputting"
-outputDir = sys.argv[1]
 line_out=""
-# record all input files at top of output file
+
+# write filenames inputted to file 
 for fn in fns:
-	line_out+="\t"+fn
+	line_out+="\t"+fn.split('/')[-1]  
 line_out+="\n"
+
+# write output to file 
 for barcode in barcode2reads:
 	line_out+=barcode
 	for fn in fns:

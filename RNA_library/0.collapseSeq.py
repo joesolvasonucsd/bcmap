@@ -11,7 +11,6 @@ seqs={}
 
 fn=sys.argv[1]
 
-print "Reading "+fn
 for line in open(fn):
 	if line[0]=="@":
 		flag=True
