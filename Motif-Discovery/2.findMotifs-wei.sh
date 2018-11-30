@@ -7,8 +7,7 @@
 
 
 
-
-
+SCRIPTNAME="2.findMotifs-wei.sh"
 
 
 
@@ -19,6 +18,8 @@ CPUS=$4
 
 findMotifs.pl $FOREGROUND fasta $OUTPUTDIR -fasta $BACKGROUND -len 6,7,8 -p $CPUS -nlen 0 -noweight -noknown
 
+echo -e "foreground = $FOREGROUND\nbackground = $BACKGROUND\noutput directory = $OUTPUTDIR\ncpus = $CPUS" > ${OUTPUTDIR}/params.txt
+cp $SCRIPTNAME ${OUTPUTDIR}/
 
 # instructions http://homer.salk.edu/homer/microarray/index.html
 
