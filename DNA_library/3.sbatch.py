@@ -1,6 +1,6 @@
 # Purpose: Print submission scripts for files split up by "splitforparallele.py"
 
-# Usage: python 3.sbatch.py <dir/to/data/input_file> <user_email> <memory_per_job> <hours_per_job>
+# Usage: python 3.sbatch.py <seq2dict_script_variant> <dir/to/data/input_file> <user_email> <memory_per_job> <hours_per_job> <scripts_dir>
 
 # Where:
 #	<dir/to/data/input_file> 	both directory and the basename of the input file (eg dir/to/data/basename)
@@ -13,15 +13,18 @@ import glob
 import sys
 
 try:
-        email=sys.argv[2]
-	mem=sys.argv[3]
-    	jobHours=sys.argv[4]
+	seq2dict=sys.argv[1]
+        email=sys.argv[3]
+	mem=sys.argv[4]
+    	jobHours=sys.argv[5]
 	
-	inputFileLoc=sys.argv[1]
+	inputFileLoc=sys.argv[2]
 	globBasenameLoc=inputFileLoc[:inputFileLoc.rfind('_')] # enables wildcard using dir/to/data/globBasename*
 	dataDir=globBasenameLoc[:globBasenameLoc.rfind('/')+1] # +1 when slicing string includes '/' in directory name
 	globBasename=globBasenameLoc[globBasenameLoc.rfind('/')+1:] # +1 when slicing excludes '/' from globBasename 
         minBasename=globBasename[:globBasename.find('_')] # do not include _collapsed or _filtered in filename
+	scriptsDir=sys.argv[6]
+	scriptsDir+='/' # in case you forget
 except IndexError:
 	print("Error: You did not specify all required arguments. View the head (use the head command) to view all necessary arguments and their order.")
 
@@ -46,8 +49,8 @@ for fn in fns:
         line_out+="module load python\n" # load package numpy
 	line_out+="module load scipy\n" # load package numpy
 	line_out+="module load biopython\n" # load package biopython
-	line_out+="python seq2dict_v3.0.py "+dataDir+" "+fn # change the name of script if necessary
-	open("submit_seq2dict.sh","w").write(line_out)
+	line_out+="python "+scriptsDir+seq2dict+" "+dataDir+" "+fn 
+	open(scriptsDir+"submit_seq2dict.sh","w").write(line_out)
 
-	os.system("sbatch submit_seq2dict.sh")
-	os.system("cp submit_seq2dict.sh "+dataDir+"submit-scripts/"+minBasename+"_"+bin+".submit.sh")
+	os.system("sbatch "+scriptsDir+"submit_seq2dict.sh")
+	os.system("cp "+scriptsDir+"submit_seq2dict.sh "+dataDir+"submit-scripts/"+minBasename+"_"+bin+".submit.sh")

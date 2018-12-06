@@ -1,11 +1,29 @@
+# Purpose
+#	Calculate barcode counts from read counts
+
+
+
+
+
+
 # Usage 
-#	python x2.collapdsed2counts.py </dir/to/data/> <sample_name> <memory_gigs> <hrs_requested> <email> <dir/input_1_collapsed.txt> ... <dir/input_n_collapsed.txt> 
+#	python x2.collapdsed2counts.py </dir/to/input/data/> <sample_name> <memory_gigs> <hrs_requested> <email> <dir/input_1_collapsed.txt> ... <dir/input_n_collapsed.txt> 
 
-# Notes
-#       <output_file_name> should be something like <sample>_rnaseq2barcodes.txt
+# Arguments
+#	</dir/to/input/data/>		directory of input data
+#	<sample_name>			name of sample (is used to name the job)
+#       <memory_gigs>                   integer. Number of gigabytes of memory requested for computation
+#       <hrs_requested>                 integer. Maximum computation time requested 
+#       <email>                         email to send alerts to 
 
+# Inputs
+#       <dir/input_1_collapsed.txt>     directory and filename of _collapsed.txt file (output of x1.collapseSeq.py)
 
-
+# Outputs
+# 	barcode2reads.txt		tsv file 
+#					header line = filenames inputted into analysis
+#					column1 = barcode
+#					column2-n  = barcode counts [units = reads per million within each file]
 
 
 

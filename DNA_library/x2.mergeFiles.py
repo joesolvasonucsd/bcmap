@@ -1,17 +1,20 @@
-# Purpose: Merge multiple unique reads/counts .txt files.
+#!/usr/bin/python
+# Purpose: Merge multiple Unique Reads Rounts <input>_collapsed.txt files.
 
-# Usage : python x2.mergeFiles.py <dir/to/data/> <output_basename> <email> <memory> <time> <input_1> <input_2> ... <input_n>
+# Usage : python x2.mergeFiles.py <dir/to/data/> <output_basename> <email> <gigs_requested> <hours_requested> </dir/to/input_1> <input_2> ... <input_n>
 
 # Where: 
 #       <dir/to/data>directory where merged .txt file outputted
 #       <output_basename>output filename (no directory; eg <input_basename>_merged.txt)
-#       <email>email
-#       <memory>memory requested for analysis (in gigs, integers only)
-#       <time>max time (in hours, integers only) requested for analysis
-#       <input_1,2,...n>any number of inputs to merge
+
+
 
 import os
 import sys
+
+# declare where DNA_library scripts are located
+scriptsDir='/oasis/projects/nsf/csd579/solvason/scripts/bcmap/DNA_library'
+scriptsDir+='/' # in case you forget
 
 # use this try except block to ensure all arguments are passed
 try:
@@ -44,19 +47,19 @@ line_out+="#SBATCH --export=ALL\n"
 line_out+="#SBATCH --mail-user="+email+"\n"
 line_out+="#SBATCH --mail-type=ALL\n"
 line_out+="module load python\n" # load package numpy
-line_out+=" ".join(["python 1.5.combineCollapsedFiles.py",dataDir,outputBasename,' '.join(input_files)]) # python scripty.py arg1 arg2 ...
+line_out+=" ".join(["python "+scriptsDir+"1.5.combineCollapsedFiles.py",dataDir,outputBasename,' '.join(input_files)]) # python scripty.py arg1 arg2 ...
 
-with open("submit_mergeFiles.sh","w") as fn:
+with open(scriptsDir+"submit_mergeFiles.sh","w") as fn:
         fn.write(line_out)
 
-os.system("sbatch submit_mergeFiles.sh")
+os.system("sbatch "+scriptsDir+"submit_mergeFiles.sh")
 
 # Copy submit scripts to data directory
 os.system("mkdir "+dataDir+"submit-scripts 2>/dev/null")
-os.system("cp submit_mergeFiles.sh "+dataDir+"submit-scripts/2-merge-files-"+outputBasename+".submit.sh")
+os.system("cp "+scriptsDir+"submit_mergeFiles.sh "+dataDir+"submit-scripts/2-merge-files-"+outputBasename+".submit.sh")
 
 # Copy scripts to data directory
 os.system("mkdir "+dataDir+"scripts 2>/dev/null")
-os.system("cp 1.5.combineCollapsedFiles.py "+dataDir+"scripts/1.5.combineCollapsedFiles.py")
+os.system("cp "+scriptsDir+"1.5.combineCollapsedFiles.py "+dataDir+"scripts/1.5.combineCollapsedFiles.py")
 
 

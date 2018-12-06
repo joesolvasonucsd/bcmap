@@ -1,13 +1,26 @@
-# Usage
-#	python x1.collapseSeq.py </dir/to/raw/data/basename_gz> </dir/to/output/> <memory_gigs> <hrs_requested> <email>	 
-
 # Purpose
-#	Takes in one or multiple .fastq.gz files, unzips, quality filters, and reports unique reads + associated read counts.
-#	Output is tsv file named <input>_collapsed.txt. column 1 = read. column 2 = read count.
- 
-# Notes
-#	</dir/to/input/basename_gz> be sure to omit the fastq.gz suffix 
+#       Takes in one or multiple .fastq.gz files, unzips, quality filters, and reports unique reads + associated read counts.
+#       Output is tsv file named <input>_collapsed.txt. column 1 = read. column 2 = read count.
 
+
+
+
+
+# Usage
+#	python x1.collapseSeq.py </dir/to/input/data/basename_gz> </dir/to/output/> <memory_gigs> <hrs_requested> <email>	 
+
+# Arguments
+#	</dir/to/output/>		directory of the outputted files
+#	<memory_gigs> 			integer. Number of gigabytes of memory requested for computation
+#	<hrs_requested> 		integer. Maximum computation time requested 
+#	<email>				email to send alerts to  
+
+# Inputs
+#       </dir/to/input/basename_gz>     directory and basename of the .fastq.gz files. Make sure you omit the .fastq.gz suffix.
+
+# Outputs
+#	basename_collapsed_filtered.fastq	unzipped fastq file from all .fastq.gz files that matched the basename of input
+#						filtered for quality
 
 
 

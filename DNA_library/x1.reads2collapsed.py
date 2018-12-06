@@ -1,15 +1,21 @@
-# Usage: python x1.reads2collapsed.py <dir/to/data/input_basename_gz> <email> <memory> <wall_time>
-#
-# Where:
+#!/usr/bin/python
+# Purpose: Collapses, quality filters and reports Unique Reads & Counts of one or multiple input.fastq.gz
+
+# Usage: python x1.reads2collapsed.py <dir/to/data/input_basename_gz> <email> <gigs_requested> <hours_requested>
+
+# Notes:
 #	<dir/to/data/input_basename>	1. location and input basename of files to be unzipped & concated
 #					2. input_basename should not include any suffixes! (eg .fastq)
-#       <email>				user email
-#       <memory>			memory requested to concat & deduplicate reads
-#	<wall_time>			time requested to concat & deduplicate reads
+
+
+
 
 import os
 import sys
 
+# Declare where DNA_library is 
+scriptsDir = '/oasis/projects/nsf/csd579/solvason/scripts/bcmap/DNA_library'
+scriptsDir += '/'
 # use this try except block to ensure all arguments are passed
 try:
         basenameLoc=sys.argv[1]
@@ -42,17 +48,17 @@ line_out+="#SBATCH --mail-type=ALL\n"
 line_out+="module load python\n" # load package numpy
 line_out+="module load scipy\n" # load package numpy
 line_out+="module load biopython\n" # load package biopython
-line_out+=" ".join(["bash 1.reads2collapsed.sh",dataDir,basename]) # reads2BcDict $dataDir $basenam$
+line_out+=" ".join(["bash "+scriptsDir+"1.reads2collapsed.sh",dataDir,basename,scriptsDir]) 
 
-with open("submit_reads2BcDict.sh","w") as fn:
+with open(scriptsDir+"submit_reads2BcDict.sh","w") as fn:
         fn.write(line_out)
 
-os.system("sbatch submit_reads2BcDict.sh")
+os.system("sbatch "+scriptsDir+"submit_reads2BcDict.sh")
 
 # Copy submit script
 os.system("mkdir "+dataDir+"submit-scripts 2>/dev/null")
-os.system("cp submit_reads2BcDict.sh "+dataDir+"submit-scripts/1-reads2colapsed-"+basename+".submit.sh")
+os.system(" ".join(["cp",scriptsDir+"submit_reads2BcDict.sh",dataDir+"submit-scripts/1-reads2colapsed-"+basename+".submit.sh"]))
 
 # Copy script to data file
 os.system("mkdir "+dataDir+"scripts 2>/dev/null")
-os.system("cp 1.reads2collapsed.sh "+dataDir+"scripts/1.reads2collapsed.sh") 
+os.system(" ".join(["cp",scriptsDir+"1.reads2collapsed.sh",dataDir+"scripts/1.reads2collapsed.sh"])) 

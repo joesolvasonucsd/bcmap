@@ -1,28 +1,32 @@
-# Purpose: submit to batch input uniqe reads/counts file for parallel seq2dict.py processing
+#!/usr/bin/python
+# Purpose: Submit to batch input_collapsed.txt file (Uniqe Reads/Counts) for parallel seq2dict.py processing
 
-# Usage: python x3.collapsed2dict.py <dir/to/data/input> <email> <memory> <hours>
+# Usage: python x3.collapsed2dict.py <seq2dict.py_variant> <dir/to/data/input_collapsed.txt> <email> <gigs_requested> <hours_requested>
 
-# Where:
-#       <dir/to/data/input> 	directory and filename of input file
-#       <email> 		user email
-#	<memory>		memory (integer in GB) requested per batch job processing each barcode bin 
-#       <hours>	                hours (integer in hours) requested per batch job processing each barcode bin 
+
+
+
+
+
 
 import os
 import sys
 
+# declare where DNA_library scripts are located
+scriptsDir="/oasis/projects/nsf/csd579/solvason/scripts/bcmap/DNA_library"
+scriptsDir+='/' # in case you forget
+
 # use this try except block to ensure all arguments are passed
 try:
-        inputFileLoc = sys.argv[1]
+        seq2dict=sys.argv[1]
+	inputFileLoc = sys.argv[2]
         inputBasename = inputFileLoc[inputFileLoc.rfind('/')+1:inputFileLoc.rfind('.')]
-
 	dataDir=inputFileLoc[:inputFileLoc.rfind('/')+1]
-	
-        email=sys.argv[2]
-        mem=sys.argv[3]
-        jobHours=sys.argv[4]
+        email=sys.argv[3]
+        mem=sys.argv[4]
+        jobHours=sys.argv[5]
 except IndexError:
-        print("Error: You have to specify Data_Directory, Basename and User_Email.")
+        print("Error: Arguments Missing. Check out the head of x3.collapsed2dict.py for required arguments.")
 
 line_out="#!/bin/bash\n"
 line_out+="#SBATCH --partition=shared\n"
@@ -39,18 +43,19 @@ line_out+="#SBATCH --mail-type=ALL\n"
 line_out+="module load python\n" # load package numpy
 line_out+="module load scipy\n" # load package numpy
 line_out+="module load biopython\n" # load package numpy
-line_out+=" ".join(["bash 2.collapsed2dict.sh",dataDir,inputFileLoc,email,mem,jobHours]) # bash scripty.sh arg1 arg2 ...
+line_out+=" ".join(["bash "+scriptsDir+"2.collapsed2dict.sh",seq2dict,dataDir,inputFileLoc,email,mem,jobHours,scriptsDir]) 
 
-with open("submit_split4parallel.sh","w") as fn:
+with open(scriptsDir+"submit_split4parallel.sh","w") as fn:
         fn.write(line_out)
 
-os.system("sbatch submit_split4parallel.sh")
+os.system("sbatch "+scriptsDir+"submit_split4parallel.sh")
 
 # Copy submit script to data directory 
 os.system("mkdir "+dataDir+"submit-scripts 2>/dev/null")
-os.system("cp submit_split4parallel.sh "+dataDir+"submit-scripts/3-collapsed2dict-"+inputBasename+".submit.sh")
+os.system("cp "+scriptsDir+"submit_split4parallel.sh "+dataDir+"submit-scripts/3-collapsed2dict-"+inputBasename+".submit.sh")
 
 # Copy submit script to data directory 
 os.system("mkdir "+dataDir+"scripts 2>/dev/null")
-os.system("cp 2.collapsed2dict.sh "+dataDir+"scripts/")
-os.system("cp seq2dict_v3.0.py "+dataDir+"scripts/")
+os.system("cp "+scriptsDir+"2.collapsed2dict.sh "+dataDir+"scripts/")
+os.system("cp "+scriptsDir+"3.sbatch.py "+dataDir+"scripts/")
+os.system("cp "+scriptsDir+seq2dict+" "+dataDir+"scripts/")
