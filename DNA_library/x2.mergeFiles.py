@@ -1,20 +1,35 @@
 #!/usr/bin/python
-# Purpose: Merge multiple Unique Reads Rounts <input>_collapsed.txt files.
+# Purpose
+#	 Merge multiple Unique Reads Rounts <input>_collapsed_filtered_collapsed.txt files.
 
-# Usage : python x2.mergeFiles.py <dir/to/data/> <output_basename> <email> <gigs_requested> <hours_requested> </dir/to/input_1> <input_2> ... <input_n>
 
-# Where: 
-#       <dir/to/data>directory where merged .txt file outputted
-#       <output_basename>output filename (no directory; eg <input_basename>_merged.txt)
 
+
+
+# Usage 
+#	x2.mergeFiles.py </dir/to/output/> <output_basename> <email> <gigs_requested> <hours_requested> </dir/to/input_1_col_fil_col.txt> ... <input_n_col_fil_col.txt>
+
+# Arguments 
+#       </dir/to/output>	directory where merged .txt file outputted
+#       <output_basename>	output filename (no directory) (eg if output_basename = inputs, output file = inputs_merged.txt)
+#       <email>                         user email to send alerts to
+#       <gigs_requested>                gigabytes memory requested for server for computation
+#       <hours_requested>               hours requested for server for computation
+
+# Inputs
+#	</dir/to/input_1_col_fil_col.txt>	<input>_collapsed_filtered_collapsed.txt (outputted from x1.reads2collapsed.py) 
+#						can input as many inputs as you like into this program
+
+# Outputs
+#	<output_basename>_merged.txt		tsv with col1 = unique read and col2 = unique read count
 
 
 import os
 import sys
 
-# declare where DNA_library scripts are located
-scriptsDir='/oasis/projects/nsf/csd579/solvason/scripts/bcmap/DNA_library'
-scriptsDir+='/' # in case you forget
+# declare scripts dir
+scriptsDir = os.path.dirname(os.path.realpath(sys.argv[0]))
+scriptsDir += '/' 
 
 # use this try except block to ensure all arguments are passed
 try:

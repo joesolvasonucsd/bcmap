@@ -1,11 +1,27 @@
 #!/usr/bin/python
 # Purpose: Collapses, quality filters and reports Unique Reads & Counts of one or multiple input.fastq.gz
 
-# Usage: python x1.reads2collapsed.py <dir/to/data/input_basename_gz> <email> <gigs_requested> <hours_requested>
 
-# Notes:
+
+
+
+
+# Usage 
+#	x1.reads2collapsed.py <dir/to/data/input_basename_gz> <email> <gigs_requested> <hours_requested>
+
+# Arguments
+#	<email> 			user email to send alerts to
+#	<gigs_requested> 		gigabytes memory requested for server for computation
+#	<hours_requested>		hours requested for server for computation
+
+# Inputs
 #	<dir/to/data/input_basename>	1. location and input basename of files to be unzipped & concated
 #					2. input_basename should not include any suffixes! (eg .fastq)
+#					3. eg if inputs are (1) sample_1_A.fastq.gz and (2) sample_1_B_.fastq.gz, basename = sample_1
+# Outputs
+#	<input>_collapsed.fastq				reads from all fastq.gz files
+#	<input>_collapsed_filtered.fastq		<input>_collapsed.fastq quality filtered
+#	<input>_collapsed_filtered_collapsed.txt	<input>_collapsed_filtered.fastq unique reads and counted (col1 = unique read, col2 = unique read count)
 
 
 
@@ -13,9 +29,10 @@
 import os
 import sys
 
-# Declare where DNA_library is 
-scriptsDir = '/oasis/projects/nsf/csd579/solvason/scripts/bcmap/DNA_library'
-scriptsDir += '/'
+# declare scripts dir
+scriptsDir = os.path.dirname(os.path.realpath(sys.argv[0]))    
+scriptsDir += '/'  
+
 # use this try except block to ensure all arguments are passed
 try:
         basenameLoc=sys.argv[1]
