@@ -9,6 +9,9 @@
 # More info on Executable Scripts
 - For more info on executable scripts, there is information about the purpose, usage, arguments, inputs and outputs of each script at the beginning of the file. Use head to access the information. 
 
+# Inputs and outputs
+- See the first 20 or so lines of x1... x2... and x3... for information about inputs and outputs.
+
 # Scripts
 
 x1.collapseSeq.py			unzips, quality filters and concatenates one or multiple input.fastq.gz files into a single input_collapsed_filtered_collapsed.txt file

@@ -1,0 +1,42 @@
+# Purpose
+#        Submit to batch input_collapsed_filtered_collapsed.txt file, or input_merged.txt, for mapping enhancer to barcodes.
+
+
+
+
+
+# Usage
+#       x3.collapsed2dict.py <seq2dict.py_variant> <dir/to/data/input_collapsed_filtered_collapsed.txt> <email> <gigs_requested> <hours_requested>
+
+# Arguments
+#       <seq2dict.py_variant>           python script you wish to use. Current main scripts are:
+#                                               1. seq2dict_v3.0.py - for enhancers inserted in normal direction. Does not output N containing barcodes.
+#                                               2. seq2dict_v2.4.py - for enhancers inserted in normal direction. Does output N containing barcodes.
+#                                               3. seq2dict_v2.4_inverse_joe.py - for enhancers inserted in inverse direction. Does output N containing barc$
+#       <email>                         user email to send alerts to
+#       <gigs_requested>                gigabytes memory requested for server for computation
+#       <hours_requested>               hours requested for server for computation
+
+# Resource Recommendations
+#	Gigs Requested
+#		I would go 30 for most fully sized datasets. You can go 10-15 if its for beta testing 
+#	        You will be charged for	memory you request even	if you don't use it. 
+#	Hours Requested
+#		Should take < 20 hours. You can request 24 and request more time by emailing xsede if needed. Or just going 48 hours. Again, you're not charged for time you don't use.
+
+# Inputs
+#       <dir/to/data/input_collapsed_filtered_collapsed.txt>    (or <input>_merged.txt) file outputted from x1.reads2collapsed.py or x2.mergeFiles.py, respe$
+
+# Outputs
+#       /dict/NNN.txt                   tsv file where NNN is first 3 letters of barcode. Columns are as follows:
+#                                               1. barcode
+#                                               2. barcode type (u=unique, m=multiple match, e=empty)
+#                                               3. enhancer
+#                                               4. barcode global count (how many times this barcode was observed regardless of associated enhancer)
+#                                               5. enhancer local count (how many times this enhancer was observed with this particular barcode (there may b$
+
+# Example 
+#       Given...
+#               input_collapsed_filtered_collapsed.txt
+#       Enter command for normal library and report barcodes containing N
+#               > x3.collapsed2dict.py seq2dict_v2.4.py ./input_collapsed_filtered_collapsed.txt solvason@ucsd.edu 30 48 

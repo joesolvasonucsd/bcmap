@@ -1,0 +1,42 @@
+# Purpose
+#        Merge multiple Unique Reads Rounts <input>_collapsed_filtered_collapsed.txt files.
+
+
+
+
+
+# Usage 
+#       x2.mergeFiles.py </dir/to/output/> <output_basename> <email> <gigs_requested> <hours_requested> </dir/to/input_1_col_fil_col.txt> ... <input_n_col_f$
+
+# Arguments 
+#       </dir/to/output>        directory where merged .txt file outputted
+#       <output_basename>       output filename (no directory) (eg if output_basename = inputs, output file = inputs_merged.txt)
+#       <email>                         user email to send alerts to
+#       <gigs_requested>                gigabytes memory requested for server for computation
+#       <hours_requested>               hours requested for server for computation
+
+# Resource Recommendations
+#	Gigs Requested
+#		10 for 2-4 files
+#		30 for > 4 files
+#               if memory failure persists, 30 G should	be enough.
+#	        You will be charged for	memory you request even	if you don't use it. 
+#	Hours Requested
+#		< 5 hours. You are not charged for hours you don't use,	so you can overshoot. 
+
+# Inputs
+#       </dir/to/input_1_col_fil_col.txt>       <input>_collapsed_filtered_collapsed.txt (outputted from x1.reads2collapsed.py) 
+#                                               can input as many inputs as you like into this program
+
+# Outputs
+#       <output_basename>_merged.txt            tsv with col1 = unique read and col2 = unique read count
+
+# Example
+#       Given...
+#               experiment_1_collapsed_filtered_collapsed.txt
+#               experiment_2_collapsed_filtered_collapsed.txt
+#
+#       To merge these two files... (assuming you want files outputted to current directory)
+#               > x2.mergeFiles.py ./ experiments_merged solvason@ucsd.edu 10 4 ./experiment_1_collapsed_filtered_collapsed.txt experiment_2_collapsed_filte$
+
+

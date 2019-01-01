@@ -1,0 +1,48 @@
+# General Guidelines
+
+- call script from where you want files outputted
+- check out the google doc for this pipeline for in depth instructions https://docs.google.com/document/d/11UmgN_wX71ORTcgZ_qnqoDmxdJ69MY8IEXYgVvf-_4U/edit
+
+
+# 	=	=	=	=	=	=	=	=	=	=	=
+ 
+# Script Descriptions #
+
+# Directory for old scripts and other files not relevant to running pipeline
+old 
+
+# Python scripts used by x1, x2 and x3. These are not necessary for the user to run the pipeline.
+1.5.combineCollapsedFiles.py		
+1.collapseSeq.py
+2.split4parallele.py
+3.sbatch.py
+
+# Barcode -> Enhancer script variants 
+seq2dict_v3.0.py - for enhancers inserted in normal direction. Does not output N containing barcodes.
+seq2dict_v2.4.py - for enhancers inserted in normal direction. Does output N containing barcodes.
+seq2dict_v2.4_inverse_joe.py - for enhancers inserted in inverse direction. Does output N containing barcodes.
+
+# Executable scripts that are necessary for user to run pipeline. 
+x1.reads2collapsed.py
+x2.mergeFiles.py
+x3.collapsed2dict.py
+
+# Shell scripts used by x1, x2 and x3. These are not necessary for the user to run the pipeline.
+1.reads2collapsed.sh
+2.collapsed2dict.sh
+
+# A utility to count all fastqs in a dictionary and print to tsv file
+countFastqs.sh
+
+# Scripts that are submitted to sbatch. These are overwritten every time the program is run. Do not worry about these scripts. They are copied to the data directory for your reference after pipeline is called.
+submit_mergeFiles.sh
+submit_reads2BcDict.sh
+submit_seq2dict.sh
+submit_split4parallel.sh
+
+# Purpose, usage, arguments, inputs, outputs and examples of how to call each script.
+x1.reads2collapsed.instructions.txt
+x2.mergeFiles.instructions.txt
+x3.collapsed2dict.instructions.txt
+
+
