@@ -2,8 +2,8 @@
 #	Calculate barcode counts from read counts
 
 
-
-
+# !! NOTE !!
+#       if inputting DNAbc and RNAbc, be sure to enter the DNAbc files first. 
 
 
 # Usage 
@@ -18,7 +18,8 @@
 
 # Inputs
 #       <dir/input_1_collapsed.txt>     directory and filename of _collapsed.txt file (output of x1.collapseSeq.py)
-
+#	<dir/input_2_collapsed.txt>	the next input file
+#	!!! Note! x3.bc2enhancer.py assumes all DNAbc counts come before RNAbc counts. Therefore, input all DNAbc counts before RNAbc counts when calling this program.  	
 # Outputs
 # 	barcode2reads.txt		tsv file 
 #					header line = filenames inputted into analysis

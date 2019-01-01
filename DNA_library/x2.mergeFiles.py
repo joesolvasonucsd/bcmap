@@ -1,5 +1,26 @@
 #!/usr/bin/python
 
+# Usage:
+# Can be called from any directory
+#
+# 	x2.mergeFiles.py </dir/to/data/> <output_basename> <email> <gigs_requested> <hours_requested> <input1> <input2> ... <inputn>
+
+
+
+
+# Notes
+# 	</dir/to/data/>		directory containing input data & where output will be directed.
+#	<output_basename> 	basename of output file. EG output_basename(output) = output_merged.txt
+#       <email>                 user email for batch processing alerts/updates
+#       <gigs_requested>        integer [gigabytes].  gigabytes of memory for processing requested from server. 
+#       <hours_requested>       integer [hours]. hours of processing time requested from batch.
+#	<input1>...<inputn>	unlimited number of input files to merge.
+
+# Inputs
+# 	unlimited number of x1.read2collapsed.py outputs (suffix = <data>_collapsed_filtrered_collapsed.txt)
+
+# Outputs
+#	<output_basename>_merged.txt	A file of unique reads with unique reads and read counts. Read counts derived from equivelant reads from separate input files are summed. 
 import os
 import sys
 

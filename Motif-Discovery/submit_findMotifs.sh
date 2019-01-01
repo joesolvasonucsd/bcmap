@@ -1,15 +1,14 @@
 #!/bin/bash
 #SBATCH --partition=shared
-#SBATCH --job-name=findMotifs_otxa-rss-i6
+#SBATCH --job-name=findMotifs_ke2018-rna-dna-weidict
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=12
 #SBATCH --mem=96G
-#SBATCH --time=48:00:00
-#SBATCH --output=../../../data/otxa-sequencing-data/otxa-rss-library-screens/rnaseq-normal-library-science-2015/otxa-rss-i6//stdout/findMotifs_otxa-rss-i6.out.txt
-#SBATCH --error=../../../data/otxa-sequencing-data/otxa-rss-library-screens/rnaseq-normal-library-science-2015/otxa-rss-i6//stderr/findMotifs_otxa-rss-i6.err.txt
+#SBATCH --time=2:00:00
+#SBATCH --output=/oasis/projects/nsf/csd579/solvason/data/otxa-sequencing-data/library-screens/ke-2018-rnaseq-dnaseq/rnabc-dnabc-br2_1-weidict//stdout/findMotifs_ke2018-rna-dna-weidict.out.txt
+#SBATCH --error=/oasis/projects/nsf/csd579/solvason/data/otxa-sequencing-data/library-screens/ke-2018-rnaseq-dnaseq/rnabc-dnabc-br2_1-weidict//stderr/findMotifs_ke2018-rna-dna-weidict.err.txt
 #SBATCH --export=ALL
 #SBATCH --mail-user=solvason@ucsd.edu
 #SBATCH --mail-type=ALL
 module load python
-module load homer/4.9_2-20-2017
-bash findMotifs-wei.sh ../../../data/otxa-sequencing-data/otxa-rss-library-screens/rnaseq-normal-library-science-2015/otxa-rss-i6/bc2enhancer_otxa-rss-i6_enhancers_greater_4.0.fa ../../../data/otxa-sequencing-data/otxa-rss-library-screens/rnaseq-normal-library-science-2015/otxa-rss-i6/allEnhancerInDNALibrary_u.fa ../../../data/otxa-sequencing-data/otxa-rss-library-screens/rnaseq-normal-library-science-2015/otxa-rss-i6//motif-output/ 12
+bash 2.findMotifs-wei.sh /oasis/projects/nsf/csd579/solvason/data/otxa-sequencing-data/library-screens/ke-2018-rnaseq-dnaseq/rnabc-dnabc-br2_1-weidict/bc2enhancer_ke2018-rna-dna_enhancers_greater_4.0.fa /oasis/projects/nsf/csd579/solvason/data/otxa-sequencing-data/library-screens/ke-2018-rnaseq-dnaseq/rnabc-dnabc-br2_1-weidict/all-enhancers-dnabc-bc_u.fa /oasis/projects/nsf/csd579/solvason/data/otxa-sequencing-data/library-screens/ke-2018-rnaseq-dnaseq/rnabc-dnabc-br2_1-weidict//motif-output/ 12

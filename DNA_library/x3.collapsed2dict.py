@@ -1,5 +1,27 @@
 #!/usr/bin/python
 
+# Usage
+# This script can be called from anywhere.
+#
+#	x3.collapsed2dict.py <seq2dict.py_script> </dir/to/input_collapsed_filtered_collapsed.txt> <email> <gigs_requested> <hours_requested>
+
+
+
+
+# Notes
+# 	<seq2dict.py_script> 			
+#	</dir/to/input_collapsed_filtered_collapsed.txt> 	
+#       <email>                 user email for batch processing alerts/updates
+#       <gigs_requested>        integer [gigabytes].  gigabytes of memory for processing requested from server. 
+#       <hours_requested>       integer [hours]. hours of processing time requested from batch.
+
+# Input
+#	input_collapsed_filtered_collapsed.txt or input_merged.txt 	a tsv file with col[1]=read, col[2]=readcount
+
+# Output
+#	dict/		directory with dictionary. Each file name (AAA, AAT...GCC,CCC) indicates the first 3 letters of the barcode.
+ 
+
 import os
 import sys
 

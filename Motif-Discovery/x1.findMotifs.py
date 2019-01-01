@@ -53,7 +53,6 @@ line_out+="#SBATCH --export=ALL\n"
 line_out+="#SBATCH --mail-user="+email+"\n"
 line_out+="#SBATCH --mail-type=ALL\n"
 line_out+="module load python\n" # load package numpy
-line_out+="module load homer/4.9_2-20-2017\n" # load homer
 line_out+=" ".join(["bash",findMotifsSh,fastaForeground,fastaBackground,motifOutputDir,cpus]) 
 
 # Write and submit batch script

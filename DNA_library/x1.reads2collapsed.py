@@ -1,5 +1,27 @@
 #!/usr/bin/python
 
+# Usage:
+# Can call this program from anywhere
+#
+#	x1.reads2collapsed.py </dir/to/fastq_gz_basename> <email> <gigs_requested> <hours_requested>
+
+
+
+
+# Notes
+#	</dir/to/fastq_gz_basename>	directory and basename of input.fastq.gz file. EG basename(./input1.fastq.gz,./input2.fastq.gz) = ./input
+#	<email>			user email for batch processing alerts/updates
+#	<gigs_requested> 	integer [gigabytes].  gigabytes of memory for processing requested from server. 
+#	<hours_requested>	integer [hours]. hours of processing time requested from batch.
+
+# Inputs
+# 	</dir/to/fastq_gz_basename>.fastq.gz file(s) are inputted, unzipped, quality filtered  and concatted together
+
+# Outputs
+#       </dir/to/fastq_gz_basename>_collapsed.fastq         	all fastq entries from all inputted files
+#	</dir/to/fastq_gz_basename>_collapsed_filtered.fastq	all fastq entries from all inputted files with sufficient quality
+
+
 import os
 import sys
 
